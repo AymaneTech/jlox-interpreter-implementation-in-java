@@ -4,8 +4,32 @@ import static com.wora.jlox.TokenType.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 class Lexer {
+    private final static Map<String, TokenType> keywords;
+
+    static {
+        keywords = Map.of(
+                "if", IF,
+                "else", ELSE,
+                "and", AND,
+                "or", OR,
+                "fun", FUN,
+                "while", WHILE,
+                "for", FOR,
+                "true", TRUE,
+                "false", FALSE,
+                "nil", NIL,
+                "print", PRINT,
+                "var", VAR,
+                "return", RETURN,
+                "class", CLASS,
+                "this", "THIS",
+                "super", SUPER,
+        );
+    }
+
     private final String source;
     private final List<Token> tokens = new ArrayList<>();
 
@@ -62,9 +86,14 @@ class Lexer {
             default -> {
                 if (isDigit(c)) {
                     readNumber();
+                } else if (isAlpha(c)) {
+                    readIdentifier();
                 } else {
                     // TODO: create a global error handler
                     System.out.println("Unexpected character");
+                }
+
+            }
         }
     }
 
@@ -97,6 +126,14 @@ class Lexer {
         }
         addToken(STRING, Double.parseDouble(source.substring(start, current)));
     }
+
+    private void readIdentifier() {
+        while (isAlphaNumeric(peek()))
+            nextChar();
+
+        addToken(IDENTIFIR);
+    }
+
     /*
      * this method used to detect if there is two charcters
      */
@@ -128,6 +165,16 @@ class Lexer {
 
     private boolean isDigit(char c) {
         return c >= '0' && c <= '9';
+    }
+
+    private boolean isAlpha(char c) {
+        return (c >= 'a' && c <= 'z') ||
+                (c >= 'A' && c <= 'Z') ||
+                c == '_';
+    }
+
+    private boolean isAlphaNumeric(char c) {
+        return isDigit(c) || isAlpha(c);
     }
 
     private void skipComment() {

@@ -38,10 +38,8 @@ class Main {
     }
 
     private static void run(String source) {
-        System.out.println("source " + source);
         Lexer lexer = new Lexer(source);
         List<Token> tokens = lexer.scanTokens();
-        System.out.println("tokens list");
-        System.out.println(tokens);
+        tokens.forEach(token -> System.out.println(token.type() + "    " +token.literal()));
     }
 }
