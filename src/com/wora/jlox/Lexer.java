@@ -54,34 +54,49 @@ class Lexer {
                 addToken(SLASH);
             }
 
-            case '"' -> string();
+            case '"' -> readString();
             case '\t', '\r', ' ' -> {
             }
             case '\n' -> line++;
 
-            // TODO: create a global error handler
-            default -> System.out.println("Unexpected character");
+            default -> {
+                if (isDigit(c)) {
+                    readNumber();
+                } else {
+                    // TODO: create a global error handler
+                    System.out.println("Unexpected character");
         }
     }
 
-    private void string() {
+    private void readString() {
         while (peek() != '"' && !isAtEof()) {
             if (peek() == '\n')
                 line++;
             nextChar();
         }
 
-        if(isAtEof()) {
-            //TODO: Create a globa error handler
+        if (isAtEof()) {
+            // TODO: Create a globa error handler
             System.out.println("String is not complete");
             return;
         }
 
         nextChar();
-        String value = source.substring(start + 1, current -1);
+        String value = source.substring(start + 1, current - 1);
         addToken(STRING, value);
     }
 
+    private void readNumber() {
+        while (isDigit(peek()))
+            nextChar();
+        if (peek() == '.' && isDigit(peekNext())) {
+            nextChar();
+
+            while (isDigit(peek()))
+                nextChar();
+        }
+        addToken(STRING, Double.parseDouble(source.substring(start, current)));
+    }
     /*
      * this method used to detect if there is two charcters
      */
@@ -111,6 +126,10 @@ class Lexer {
         return current >= source.length();
     }
 
+    private boolean isDigit(char c) {
+        return c >= '0' && c <= '9';
+    }
+
     private void skipComment() {
         while (peek() != '\n' && !isAtEof())
             nextChar();
@@ -120,5 +139,11 @@ class Lexer {
         if (isAtEof())
             return '\0';
         return source.charAt(current);
+    }
+
+    private char peekNext() {
+        if (source.charAt(current + 1) >= source.length())
+            return '\0';
+        return source.charAt(current + 1);
     }
 }
