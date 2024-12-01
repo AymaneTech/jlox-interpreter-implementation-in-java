@@ -1,0 +1,13 @@
+class Greeter {
+    init(name) {
+        this.name = name;
+    }
+
+    greet(you) {
+        print "Hi " + you + ", I'm " + this.name;
+    }
+}
+
+var g = Greeter("jlox-rs");
+g.greet("esteemed user");
+
