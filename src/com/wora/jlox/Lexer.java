@@ -3,6 +3,7 @@ package com.wora.jlox;
 import static com.wora.jlox.TokenType.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,24 +11,23 @@ class Lexer {
     private final static Map<String, TokenType> keywords;
 
     static {
-        keywords = Map.of(
-                "if", IF,
-                "else", ELSE,
-                "and", AND,
-                "or", OR,
-                "fun", FUN,
-                "while", WHILE,
-                "for", FOR,
-                "true", TRUE,
-                "false", FALSE,
-                "nil", NIL,
-                "print", PRINT,
-                "var", VAR,
-                "return", RETURN,
-                "class", CLASS,
-                "this", "THIS",
-                "super", SUPER,
-        );
+        keywords = new HashMap<>();
+        keywords.put("if", IF);
+        keywords.put("else", ELSE);
+        keywords.put("and", AND);
+        keywords.put("or", OR);
+        keywords.put("fun", FUN);
+        keywords.put("while", WHILE);
+        keywords.put("for", FOR);
+        keywords.put("true", TRUE);
+        keywords.put("false", FALSE);
+        keywords.put("nil", NIL);
+        keywords.put("print", PRINT);
+        keywords.put("var", VAR);
+        keywords.put("return", RETURN);
+        keywords.put("class", CLASS);
+        keywords.put("this", THIS);
+        keywords.put("super", SUPER);
     }
 
     private final String source;
@@ -130,8 +130,12 @@ class Lexer {
     private void readIdentifier() {
         while (isAlphaNumeric(peek()))
             nextChar();
+        String text = source.substring(start, current);
+        TokenType type = keywords.get(text);
+        if(type == null) 
+            type = IDENTIFIR;
 
-        addToken(IDENTIFIR);
+        addToken(type);
     }
 
     /*
